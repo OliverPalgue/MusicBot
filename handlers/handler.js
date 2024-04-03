@@ -1,5 +1,6 @@
-const { readdirSync } = require("fs");
-const { slash } = require("../settings/config");
+const { glob } = require("glob");
+const { promisify } = require("util");
+const globPromise = promisify(glob);
 const JUGNU = require("./Client");
 
 /**
@@ -9,22 +10,29 @@ const JUGNU = require("./Client");
 module.exports = async (client) => {
   // LOADING SLASH COMMANDS
   try {
-    let allCommands = [];
-    readdirSync("./Commands/Slash").forEach((dir) => {
-      const commands = readdirSync(`./Commands/Slash/${dir}`).filter((f) =>
-        f.endsWith(".js")
-      );
-
-      for (const cmd of commands) {
-        const command = require(`../Commands/Slash/${dir}/${cmd}`);
-        if (command.name) {
-          client.commands.set(command.name, command);
-          allCommands.push(command);
-        } else {
-          console.log(`${cmd} is not ready`);
-        }
-      }
+    let arrayOfcommands = [];
+    const commandFiles = await globPromise(
+      `${process.cwd()}/Commands/Slash/**/*.js`
+    );
+    commandFiles.map((value) => {
+      const file = require(value);
+      const splitted = value.split("/");
+      const directory = splitted[splitted.length - 2];
+      const properties = { directory, ...file };
+      client.commands.set(file.name, properties);
+      arrayOfcommands.push(file);
     });
+
+    client.on("ready", async () => {
+      await client.application.commands.set(arrayOfcommands);
+      if(client.config.guildID){
+          let guild = client.guilds.cache.get(client.config.guildID)
+          if(!guild) return
+          await guild.commands.set(arrayOfcommands)
+      }
+
+    });
+
     console.log(`${client.commands.size} Slash Commands Loaded`);
   } catch (e) {
     console.log(e);
@@ -32,37 +40,28 @@ module.exports = async (client) => {
 
   // LOADING MESSAGE COMMANDS
   try {
-    readdirSync("./Commands/Message").forEach((dir) => {
-      const commands = readdirSync(`./Commands/Message/${dir}`).filter((f) =>
-        f.endsWith(".js")
-      );
-
-      for (const cmd of commands) {
-        const command = require(`../Commands/Message/${dir}/${cmd}`);
-        if (command.name) {
-          client.mcommands.set(command.name, command);
-          if (command.aliases && Array.isArray(command.aliases))
-            command.aliases.forEach((a) => client.aliases.set(a, command.name));
-        } else {
-          console.log(`${cmd} is not ready`);
-        }
-      }
+    const MessageCommadsFiles = await globPromise(
+      `${process.cwd()}/Commands/Message/**/*.js`
+    );
+    MessageCommadsFiles.map((value) => {
+      const file = require(value);
+      const splitted = value.split("/");
+      const directory = splitted[splitted.length - 2];
+      const properties = { directory, ...file };
+      client.mcommands.set(file.name, properties);
+      if (file.aliases && Array.isArray(file.aliases))
+        file.aliases.forEach((a) => client.aliases.set(a, file.name));
     });
-    console.log(`${client.mcommands.size} Message Commands Loaded`);
-  } catch (error) {
-    console.log(error);
-  }
 
+    console.log(`${client.mcommands.size} Message Commands Loaded`);
+  } catch (e) {
+    console.log(e);
+  }
   // Loading Event Files
   try {
-    let eventCount = 0;
-    readdirSync("./events")
-      .filter((f) => f.endsWith(".js"))
-      .forEach((event) => {
-        require(`../events/${event}`);
-        eventCount++;
-      });
-    console.log(`${eventCount} Events Loaded`);
+    const eventFiles = await globPromise(`${process.cwd()}/events/*.js`);
+    eventFiles.map((value) => require(value));
+    console.log(`${eventFiles.length} Events Loaded`);
   } catch (e) {
     console.log(e);
   }

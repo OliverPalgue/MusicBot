@@ -1,4 +1,4 @@
-const { Message, PermissionFlagsBits } = require("discord.js");
+const { Message } = require("discord.js");
 const JUGNU = require("../../../handlers/Client");
 const { Queue } = require("distube");
 
@@ -6,8 +6,8 @@ module.exports = {
   name: "uptime",
   aliases: ["up"],
   description: `see when bot comes online`,
-  userPermissions: PermissionFlagsBits.SendMessages,
-  botPermissions: PermissionFlagsBits.EmbedLinks,
+  userPermissions: ['SEND_MESSAGES'],
+  botPermissions: ['EMBED_LINKS'],
   category: "Information",
   cooldown: 5,
   inVoiceChannel: false,
@@ -25,9 +25,6 @@ module.exports = {
    */
   run: async (client, message, args, prefix, queue) => {
     // Code
-    client.embed(
-      message,
-      `Uptime :: <t:${Math.floor(Date.now() / 1000 - client.uptime / 1000)}:R>`
-    );
+    client.embed(message, `Uptime :: <t:${Math.floor(Date.now() / 1000 - client.uptime / 1000)}:R>`);
   },
 };

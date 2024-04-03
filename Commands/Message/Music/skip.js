@@ -1,14 +1,13 @@
-const { Message, PermissionFlagsBits } = require("discord.js");
+const { Message } = require("discord.js");
 const JUGNU = require("../../../handlers/Client");
 const { Queue } = require("distube");
-const { skip } = require("../../../handlers/functions");
 
 module.exports = {
   name: "skip",
   aliases: ["s", "skp"],
   description: `skip to next song in queue`,
-  userPermissions: PermissionFlagsBits.Connect,
-  botPermissions: PermissionFlagsBits.Connect,
+  userPermissions: ["CONNECT"],
+  botPermissions: ["CONNECT"],
   category: "Music",
   cooldown: 5,
   inVoiceChannel: true,
@@ -26,7 +25,7 @@ module.exports = {
    */
   run: async (client, message, args, prefix, queue) => {
     // Code
-    await skip(queue);
+    await queue.skip().catch((e) => null);
     client.embed(message, `${client.config.emoji.SUCCESS}  Song Skipped !!`);
   },
 };

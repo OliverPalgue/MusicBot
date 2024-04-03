@@ -3,14 +3,13 @@ const {
   Collection,
   Client,
   GuildMember,
-  PermissionFlagsBits,
-  ActionRowBuilder,
-  ButtonBuilder,
-  ButtonStyle,
+  Permissions,
+  MessageActionRow,
+  MessageButton,
 } = require("discord.js");
+const { embed: ee, emoji, PREFIX } = require("../settings/config");
 const client = require("../index");
-const { Song, Queue } = require("distube");
-const JUGNU = require("./Client");
+const { Song } = require("distube");
 
 /**
  *
@@ -57,7 +56,7 @@ async function check_dj(client, member, song = null) {
   //get the adminroles
   let roleid = await client.music.get(`${member.guild.id}.djrole`);
   //if no dj roles return false, so that it continues
-  let isdj = false;
+  var isdj = false;
   if (!roleid) return false;
   //if the role does not exist, then skip this current loop run
   if (!member.guild.roles.cache.get(roleid)) {
@@ -69,10 +68,10 @@ async function check_dj(client, member, song = null) {
   //if he is a dj or admin, then return false, which will continue the cmd
   if (
     !isdj &&
-    !member.permissions.has(PermissionFlagsBits.Administrator) &&
+    !member.permissions.has(Permissions.FLAGS.ADMINISTRATOR) &&
     song?.user.id !== member.id
   ) {
-    return true;
+    return `<@${roleid}>`;
   } else {
     return false;
   }
@@ -80,7 +79,7 @@ async function check_dj(client, member, song = null) {
 
 async function databasing(guildID, userID) {
   await client.music.ensure(guildID, {
-    prefix: client.config.PREFIX,
+    prefix: PREFIX,
     djrole: null,
     vc: {
       enable: false,
@@ -91,48 +90,26 @@ async function databasing(guildID, userID) {
       pmsg: null,
       qmsg: null,
     },
-    autoresume: false,
+    autoresume : false,
+    
   });
-  await client.autoresume.ensure(guildID, {
-    guild: guildID,
-    voiceChannel: null,
-    textChannel: null,
-    songs: [],
-    volume: client.config.options.defaultVolume,
-    repeatMode: 0,
-    playing: null,
-    currentTime: null,
-    autoplay: null,
+  await client.queue.ensure(userID, {
+    TEMPLATEQUEUEINFORMATION: ["queue", "sadasd"],
   });
 }
 
 async function swap_pages(interaction, embeds) {
   let currentPage = 0;
-  let allbuttons = new ActionRowBuilder().addComponents([
-    new ButtonBuilder()
-      .setStyle(ButtonStyle.Secondary)
-      .setCustomId("0")
-      .setLabel("<<"),
+  let allbuttons = new MessageActionRow().addComponents([
+    new MessageButton().setStyle("SECONDARY").setCustomId("0").setLabel("<<"),
     // .setEmoji(`⏪`),
-    new ButtonBuilder()
-      .setStyle(ButtonStyle.Secondary)
-      .setCustomId("1")
-      .setLabel("<"),
+    new MessageButton().setStyle("SECONDARY").setCustomId("1").setLabel("<"),
     // .setEmoji(`◀️`),
-    new ButtonBuilder()
-      .setStyle(ButtonStyle.Danger)
-      .setCustomId("2")
-      .setLabel("⛔️"),
+    new MessageButton().setStyle("DANGER").setCustomId("2").setLabel("⛔️"),
     // .setEmoji(`🗑`),
-    new ButtonBuilder()
-      .setStyle(ButtonStyle.Secondary)
-      .setCustomId("3")
-      .setLabel(">"),
+    new MessageButton().setStyle("SECONDARY").setCustomId("3").setLabel(">"),
     // .setEmoji(`▶️`),
-    new ButtonBuilder()
-      .setStyle(ButtonStyle.Secondary)
-      .setCustomId("4")
-      .setLabel(">>"),
+    new MessageButton().setStyle("SECONDARY").setCustomId("4").setLabel(">>"),
     // .setEmoji(`⏩`),
   ]);
   if (embeds.length === 1) {
@@ -296,117 +273,6 @@ function createBar(total, current, size = 25, line = "▬", slider = "🔷") {
   }
 }
 
-function msToDuration(ms) {
-  let seconds = Math.floor(ms / 1000);
-  let minutes = Math.floor(seconds / 60);
-  let hours = Math.floor(minutes / 60);
-  let days = Math.floor(hours / 24);
-  let months = Math.floor(days / 30);
-  let years = Math.floor(days / 365);
-
-  seconds %= 60;
-  minutes %= 60;
-  hours %= 24;
-  days %= 24;
-  months %= 12;
-
-  // to string
-  years = years ? `${years} Years ` : "";
-  months = months ? `${months} Months ` : "";
-  days = days ? `${days} Days ` : "";
-  hours = hours ? `${hours} Hours ` : "";
-  minutes = minutes ? `${minutes} Minutes ` : "";
-  seconds = seconds ? `${seconds} Seconds ` : "";
-
-  return years + months + days + hours + minutes + seconds;
-}
-
-/**
- *
- * @param {Queue} queue
- */
-async function skip(queue) {
-  if (queue.songs.length <= 1) {
-    if (!queue.autoplay) {
-      await queue.stop().catch((e) => null);
-    } else {
-      await queue.skip().catch((e) => null);
-    }
-  } else {
-    await queue.skip().catch((e) => null);
-  }
-}
-
-function formatBytes(x) {
-  const units = ["bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
-  let l = 0,
-    n = parseInt(x, 10) || 0;
-
-  while (n >= 1024 && ++l) {
-    n = n / 1024;
-  }
-
-  return n.toFixed(n < 10 && l > 0 ? 1 : 0) + " " + units[l];
-}
-
-function getPermissionName(permissionValue) {
-  const permissionList = Object.entries(PermissionFlagsBits);
-  for (const [permissionName, permissionBit] of permissionList) {
-    if (permissionValue === permissionBit) {
-      return permissionName;
-    }
-  }
-  return null; // Permission not found
-}
-
-function arraysEqual(a, b) {
-  if (a === b) return true;
-  if (a == null || b == null) return false;
-  if (a.length !== b.length) return false;
-
-  for (var i = 0; i < a.length; ++i) {
-    if (a[i] !== b[i]) return false;
-  }
-  return true;
-}
-
-/**
- *
- * @param {JUGNU} client
- */
-async function registerSlashCommands(client) {
-  const { slash } = client.config;
-  const commands = client.commands.map((cmd) => {
-    return {
-      name: cmd.name,
-      description: cmd.description,
-      options: cmd.options,
-      type: cmd.type,
-    };
-  });
-
-  try {
-    if (slash.global) {
-      console.log("Started refreshing application (/) commands.");
-      await client.application.commands.set(commands);
-      console.log("Successfully reloaded application (/) commands.");
-    } else {
-      console.log("Started refreshing guild (/) commands.");
-      for (const guildID of slash.guildIDS) {
-        const guild = await client.guilds.fetch(guildID);
-        if (!guild) {
-          console.error(`Guild with ID ${guildID} not found.`);
-          continue;
-        }
-        await guild.commands.set(commands);
-      }
-      console.log("Successfully reloaded guild (/) commands.");
-    }
-  } catch (error) {
-    console.error("Error registering slash commands:", error);
-  }
-}
-
 module.exports = {
   cooldown,
   check_dj,
@@ -414,10 +280,4 @@ module.exports = {
   swap_pages,
   shuffle,
   createBar,
-  msToDuration,
-  skip,
-  formatBytes,
-  getPermissionName,
-  arraysEqual,
-  registerSlashCommands,
 };

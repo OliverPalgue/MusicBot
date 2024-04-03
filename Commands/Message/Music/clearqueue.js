@@ -1,13 +1,13 @@
-const { Message, PermissionFlagsBits } = require("discord.js");
+const { Message } = require("discord.js");
 const JUGNU = require("../../../handlers/Client");
 const { Queue } = require("distube");
 
 module.exports = {
   name: "clearqueue",
-  aliases: ["clq", "clearq"],
+  aliases : ['clq','clearq'],
   description: `clear current queue of server`,
-  userPermissions: PermissionFlagsBits.Connect,
-  botPermissions: PermissionFlagsBits.Connect,
+  userPermissions: ["CONNECT"],
+  botPermissions: ["CONNECT"],
   category: "Music",
   cooldown: 5,
   inVoiceChannel: true,
@@ -25,7 +25,7 @@ module.exports = {
    */
   run: async (client, message, args, prefix, queue) => {
     // Code
-    queue.remove();
+    queue.delete();
     client.embed(message, `${client.config.emoji.SUCCESS} Queue Cleared !!`);
   },
 };

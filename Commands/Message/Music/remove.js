@@ -1,4 +1,4 @@
-const { Message, PermissionFlagsBits } = require("discord.js");
+const { Message } = require("discord.js");
 const JUGNU = require("../../../handlers/Client");
 const { Queue } = require("distube");
 
@@ -6,8 +6,8 @@ module.exports = {
   name: "remove",
   aliases: ["rem", "remsong"],
   description: `remove a song from current queue`,
-  userPermissions: PermissionFlagsBits.Connect,
-  botPermissions: PermissionFlagsBits.Connect,
+  userPermissions: ["CONNECT"],
+  botPermissions: ["CONNECT"],
   category: "Music",
   cooldown: 5,
   inVoiceChannel: true,
@@ -24,37 +24,28 @@ module.exports = {
    * @param {Queue} queue
    */
   run: async (client, message, args, prefix, queue) => {
-    try {
-      let songIndex = Number(args[0]);
-
-      if (
-        !songIndex ||
-        isNaN(songIndex) ||
-        songIndex < 1 ||
-        songIndex > queue.songs.length
-      ) {
-        return client.embed(message, "Please provide a valid song index.");
-      }
-
-      let removedTrack = queue.songs.splice(songIndex - 1, 1)[0];
-      if (!removedTrack) {
-        return client.embed(
-          message,
-          "Failed to remove the track from the queue."
-        );
-      }
-
-      client.embed(
+    // Code
+    let songIndex = Number(args[0]);
+    if (!songIndex) {
+      return client.embed(
         message,
-        `${client.config.emoji.SUCCESS} Removed \`${client.getTitle(
-          removedTrack
-        )}\` From the Queue !!`
+        `** ${
+          client.config.emoji.ERROR
+        } Please Provide Song Index Between \`0\`-\`${
+          queue.songs.length - 1
+        }\`**`
       );
-    } catch (error) {
-      console.error(error);
+    } else if (songIndex === 0) {
+      return client.embed(
+        message,
+        `** ${client.config.emoji.ERROR} You can't Remove Current Song **`
+      );
+    } else {
+      let track = queue.songs[songIndex];
+      queue.songs.splice(track, track + 1);
       client.embed(
         message,
-        `${client.config.emoji.ERROR} An error occurred: ${error.message}`
+        `${client.config.emoji.SUCCESS} Removed \`${track.name}\` Song From Queue !!`
       );
     }
   },

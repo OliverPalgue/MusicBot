@@ -1,19 +1,15 @@
-const {
-  CommandInteraction,
-  PermissionFlagsBits,
-  ApplicationCommandType,
-} = require("discord.js");
+const { CommandInteraction } = require("discord.js");
 const JUGNU = require("../../../handlers/Client");
 const { Queue } = require("distube");
 
 module.exports = {
   name: "247",
   description: `toggle 24/7 system on/off`,
-  userPermissions: PermissionFlagsBits.ManageGuild,
-  botPermissions: PermissionFlagsBits.EmbedLinks,
+  userPermissions: ["MANAGE_GUILD"],
+  botPermissions: ["EMBED_LINKS"],
   category: "Settings",
   cooldown: 5,
-  type: ApplicationCommandType.ChatInput,
+  type: "CHAT_INPUT",
   inVoiceChannel: true,
   inSameVoiceChannel: true,
   Player: false,
@@ -29,7 +25,7 @@ module.exports = {
   run: async (client, interaction, args, queue) => {
     // Code
     let data = await client.music.get(`${interaction.guild.id}.vc`);
-    let mode = data?.enable;
+    let mode = data.enable;
     let channel = interaction.member.voice.channel;
 
     if (mode === true) {

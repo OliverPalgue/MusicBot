@@ -1,20 +1,15 @@
-const {
-  CommandInteraction,
-  PermissionFlagsBits,
-  ApplicationCommandType,
-  ApplicationCommandOptionType,
-} = require("discord.js");
+const { CommandInteraction } = require("discord.js");
 const JUGNU = require("../../../handlers/Client");
 const { Queue } = require("distube");
 
 module.exports = {
   name: "remove",
   description: `remove a song from current queue`,
-  userPermissions: PermissionFlagsBits.Connect,
-  botPermissions: PermissionFlagsBits.Connect,
+  userPermissions: ["CONNECT"],
+  botPermissions: ["CONNECT"],
   category: "Music",
   cooldown: 5,
-  type: ApplicationCommandType.ChatInput,
+  type: "CHAT_INPUT",
   inVoiceChannel: true,
   inSameVoiceChannel: true,
   Player: true,
@@ -23,7 +18,7 @@ module.exports = {
     {
       name: "trackindex",
       description: `give me song index`,
-      type: ApplicationCommandOptionType.Number,
+      type: "NUMBER",
       required: true,
     },
   ],
@@ -37,38 +32,18 @@ module.exports = {
    */
   run: async (client, interaction, args, queue) => {
     // Code
-
-    try {
-      const songIndex = interaction.options.getNumber("trackindex");
-
-      if (
-        !songIndex ||
-        isNaN(songIndex) ||
-        songIndex < 1 ||
-        songIndex > queue.songs.length
-      ) {
-        return client.embed(interaction, "Please provide a valid song index.");
-      }
-
-      let removedTrack = queue.songs.splice(songIndex - 1, 1)[0];
-      if (!removedTrack) {
-        return client.embed(
-          interaction,
-          "Failed to remove the track from the queue."
-        );
-      }
-
-      client.embed(
+    let songIndex = interaction.options.getNumber("trackindex");
+    if (songIndex === 0) {
+      return client.embed(
         interaction,
-        `${client.config.emoji.SUCCESS} Removed \`${client.getTitle(
-          removedTrack
-        )}\` From the Queue !!`
+        `** ${client.config.emoji.ERROR} You can't Remove Current Song **`
       );
-    } catch (error) {
-      console.error(error);
+    } else {
+      let track = queue.songs[songIndex];
+      queue.songs.splice(track, track + 1);
       client.embed(
         interaction,
-        `${client.config.emoji.ERROR} An error occurred: ${error.message}`
+        `${client.config.emoji.SUCCESS} Removed \`${track.name}\` Song From Queue !!`
       );
     }
   },

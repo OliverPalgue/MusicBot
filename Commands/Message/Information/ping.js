@@ -1,4 +1,4 @@
-const { Message, PermissionFlagsBits, Colors } = require("discord.js");
+const { Message } = require("discord.js");
 const JUGNU = require("../../../handlers/Client");
 const { Queue } = require("distube");
 
@@ -6,8 +6,8 @@ module.exports = {
   name: "ping",
   aliases: ["latancy"],
   description: `get ping of bot`,
-  userPermissions: PermissionFlagsBits.SendMessages,
-  botPermissions: PermissionFlagsBits.EmbedLinks,
+  userPermissions: ['SEND_MESSAGES'],
+  botPermissions: ['EMBED_LINKS'],
   category: "Information",
   cooldown: 5,
   inVoiceChannel: false,
@@ -25,42 +25,6 @@ module.exports = {
    */
   run: async (client, message, args, prefix, queue) => {
     // Code
-    const startTime = Date.now();
-
-    const tempMessage = await message.reply({
-      embeds: [
-        {
-          description: "Pinging...",
-          color: Colors.Blurple,
-        },
-      ],
-    });
-
-    const messageLatency =
-      tempMessage.createdTimestamp - message.createdTimestamp;
-    const serverLatency = Math.round(messageLatency / 2);
-    const apiLatency = Math.round(client.ws.ping);
-    const botLatency = Date.now() - startTime;
-
-    await tempMessage.edit({
-      embeds: [
-        {
-          title: "Pong! 🏓",
-          description: `Bot Latency: \`${formatMilliseconds(
-            botLatency
-          )}\`\nMessage Latency: \`${formatMilliseconds(
-            messageLatency
-          )}\`\nServer Latency: \`${formatMilliseconds(
-            serverLatency
-          )}\`\nDiscord API Latency: \`${formatMilliseconds(apiLatency)}\``,
-          color: Colors.Blurple,
-        },
-      ],
-    });
+    client.embed(message, `Ping :: \`${client.ws.ping}\``);
   },
 };
-
-// Function to format milliseconds into a human-readable string
-function formatMilliseconds(ms) {
-  return `${ms}ms`;
-}

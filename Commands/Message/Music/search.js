@@ -1,20 +1,20 @@
 const {
   Message,
-  ActionRowBuilder,
-  StringSelectMenuBuilder,
-  EmbedBuilder,
-  PermissionFlagsBits,
+  MessageActionRow,
+  MessageSelectMenu,
+  MessageEmbed,
 } = require("discord.js");
 const JUGNU = require("../../../handlers/Client");
 const { Queue } = require("distube");
 const { numberEmojis } = require("../../../settings/config");
 
+
 module.exports = {
   name: "search",
   aliases: ["sr", "find"],
   description: `search a song by name`,
-  userPermissions: PermissionFlagsBits.Connect,
-  botPermissions: PermissionFlagsBits.Connect,
+  userPermissions: ["CONNECT"],
+  botPermissions: ["CONNECT"],
   category: "Music",
   cooldown: 5,
   inVoiceChannel: true,
@@ -45,27 +45,27 @@ module.exports = {
     });
     let tracks = res
       .map((song, index) => {
-        return `\`${index + 1}\`) [\`${client.getTitle(song)}\`](${
-          song.url
-        }) \`[${song.formattedDuration}]\``;
+        return `\`${index + 1}\`) [\`${song.name}\`](${song.url}) \`[${
+          song.formattedDuration
+        }]\``;
       })
       .join("\n\n");
 
-    let embed = new EmbedBuilder()
+    let embed = new MessageEmbed()
       .setColor(client.config.embed.color)
       .setTitle(`\`${query}\` Search Results`)
       .setDescription(tracks.substring(0, 3800))
       //   .setThumbnail(client.user.displayAvatarURL({ dynamic: true }))
       .setFooter(client.getFooter(message.author));
 
-    let menuraw = new ActionRowBuilder().addComponents([
-      new StringSelectMenuBuilder()
+    let menuraw = new MessageActionRow().addComponents([
+      new MessageSelectMenu()
         .setCustomId("search")
         .setPlaceholder(`Click to See Best Songs`)
         .addOptions(
           res.map((song, index) => {
             return {
-              label: client.getTitle(song),
+              label: song.name.substring(0, 50),
               value: song.url,
               description: `Click to Play Song`,
               emoji: numberEmojis[index + 1],
@@ -83,7 +83,7 @@ module.exports = {
         });
         const { channel } = message.member.voice;
         collector.on("collect", async (interaction) => {
-          if (interaction.isStringSelectMenu()) {
+          if (interaction.isSelectMenu()) {
             await interaction.deferUpdate().catch((e) => {});
             if (interaction.customId === "search") {
               let song = interaction.values[0];

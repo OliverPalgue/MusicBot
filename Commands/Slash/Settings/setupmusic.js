@@ -1,20 +1,15 @@
-const {
-  CommandInteraction,
-  ChannelType,
-  PermissionFlagsBits,
-  ApplicationCommandType,
-} = require("discord.js");
+const { CommandInteraction } = require("discord.js");
 const JUGNU = require("../../../handlers/Client");
 const { Queue } = require("distube");
 
 module.exports = {
   name: "setupmusic",
   description: `setup music channel in server`,
-  userPermissions: PermissionFlagsBits.ManageChannels,
-  botPermissions: PermissionFlagsBits.ManageChannels,
+  userPermissions: ["MANAGE_CHANNELS"],
+  botPermissions: ["MANAGE_CHANNELS"],
   category: "Settings",
   cooldown: 5,
-  type: ApplicationCommandType.ChatInput,
+  type: "CHAT_INPUT",
   inVoiceChannel: false,
   inSameVoiceChannel: false,
   Player: false,
@@ -33,7 +28,6 @@ module.exports = {
       `${interaction.guild.id}.music.channel`
     );
     let oldChannel = interaction.guild.channels.cache.get(channel);
-
     if (oldChannel) {
       return client.embed(
         interaction,
@@ -41,26 +35,11 @@ module.exports = {
       );
     } else {
       interaction.guild.channels
-        .create({
-          name: `${client.user.username}-requests`,
-          type: ChannelType.GuildText,
+        .create(`${client.user.username}-requests`, {
+          type: "GUILD_TEXT",
           rateLimitPerUser: 3,
-          reason: `Management of music requests channel.`,
-          topic: `Music Request Channel for ${client.user.username}. Please submit song names or links to play music.`,
-          permissionOverwrites: [
-            {
-              id: client.user.id,
-              allow: [
-                "ManageMessages",
-                "ManageChannels",
-                "SendMessages",
-                "EmbedLinks",
-                "ReadMessageHistory",
-                "UseExternalEmojis",
-                "ViewChannel",
-              ],
-            },
-          ],
+          reason: `for music bot`,
+          topic: `Music Request Channel for ${client.user.username}, Type Song Name or Link to Play Song`,
         })
         .then(async (ch) => {
           await ch

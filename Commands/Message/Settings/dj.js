@@ -1,4 +1,4 @@
-const { Message, PermissionFlagsBits } = require("discord.js");
+const { Message } = require("discord.js");
 const JUGNU = require("../../../handlers/Client");
 const { Queue } = require("distube");
 
@@ -6,8 +6,8 @@ module.exports = {
   name: "dj",
   aliases: ["setupdj"],
   description: `DJ system on/off`,
-  userPermissions: PermissionFlagsBits.ManageGuild,
-  botPermissions: PermissionFlagsBits.ManageGuild,
+  userPermissions: ["MANAGE_GUILD"],
+  botPermissions: ["MANAGE_GUILD"],
   category: "Settings",
   cooldown: 5,
   inVoiceChannel: false,
@@ -48,34 +48,17 @@ module.exports = {
         break;
       case "disable":
         {
-          await client.music.set(`${message.guild.id}.djrole`, null);
-          client.embed(
-            message,
-            `${client.config.emoji.SUCCESS} DJ System Disabled`
-          );
-        }
-        break;
-      case "cmds":
-        {
-          const djcommands = client.mcommands
-            .filter((cmd) => cmd?.djOnly)
-            .map((cmd) => cmd.name)
-            .join(", ");
-
-          client.embed(
-            message,
-            `**DJ Commands** \n \`\`\`js\n${djcommands}\`\`\``
-          );
+            await client.music.set(`${message.guild.id}.djrole`, null);
+            client.embed(
+              message,
+              `${client.config.emoji.SUCCESS} DJ System Disabled`
+            );
         }
         break;
 
-      default:
-        {
-          client.embed(
-            message,
-            `** ${client.config.emoji.ERROR} Wrong Usage **  \n\n \`${prefix}dj enable <@role>\` \n\n \`${prefix}dj disable\`  \n\n \`${prefix}dj cmds\` `
-          );
-        }
+      default:{
+          client.embed(message,`** ${client.config.emoji.ERROR} Wrong Usage **  \n\n \`${prefix}dj enable <@role>\` \n\n \`${prefix}dj disable\` `)
+      }
         break;
     }
   },

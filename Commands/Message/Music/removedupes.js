@@ -1,4 +1,4 @@
-const { Message, PermissionFlagsBits } = require("discord.js");
+const { Message } = require("discord.js");
 const JUGNU = require("../../../handlers/Client");
 const { Queue } = require("distube");
 
@@ -6,8 +6,8 @@ module.exports = {
   name: "removedupes",
   aliases: ["rmdupes", "rmd"],
   description: `remove duplicate songs from queue`,
-  userPermissions: PermissionFlagsBits.Connect,
-  botPermissions: PermissionFlagsBits.Connect,
+  userPermissions: ["CONNECT"],
+  botPermissions: ["CONNECT"],
   category: "Music",
   cooldown: 5,
   inVoiceChannel: true,
@@ -40,7 +40,7 @@ module.exports = {
       }
     }
     //clear the Queue
-    queue.remove();
+    queue.delete();
     //now add every not dupe song again
     await newtracks.map((song, index) => {
       queue.addToQueue(song, index);

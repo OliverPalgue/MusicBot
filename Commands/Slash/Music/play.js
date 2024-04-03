@@ -1,20 +1,15 @@
-const {
-  CommandInteraction,
-  PermissionFlagsBits,
-  ApplicationCommandType,
-  ApplicationCommandOptionType,
-} = require("discord.js");
+const { CommandInteraction } = require("discord.js");
 const JUGNU = require("../../../handlers/Client");
 const { Queue } = require("distube");
 
 module.exports = {
   name: "play",
   description: `play song by song Name/Link`,
-  userPermissions: PermissionFlagsBits.Connect,
-  botPermissions: PermissionFlagsBits.Connect,
+  userPermissions: ["CONNECT"],
+  botPermissions: ["CONNECT"],
   category: "Music",
   cooldown: 5,
-  type: ApplicationCommandType.ChatInput,
+  type: "CHAT_INPUT",
   inVoiceChannel: true,
   inSameVoiceChannel: true,
   Player: false,
@@ -23,7 +18,7 @@ module.exports = {
     {
       name: "song",
       description: `song Name/Link`,
-      type: ApplicationCommandOptionType.String,
+      type: "STRING",
       required: true,
     },
   ],
@@ -43,15 +38,9 @@ module.exports = {
       member: interaction.member,
       textChannel: interaction.channel,
     });
-    interaction
-      .followUp({
-        content: `Searching \`${song}\``,
-        ephemeral: true,
-      })
-      .then((msg) => {
-        setTimeout(() => {
-          msg.delete().catch((e) => {});
-        }, 3000);
-      });
+    interaction.followUp({
+      content: `Searching \`${song}\``,
+      ephemeral: true,
+    });
   },
 };

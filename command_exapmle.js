@@ -1,5 +1,6 @@
 // chat input slash commands
-const { CommandInteraction, ApplicationCommandType } = require("discord.js");
+const { CommandInteraction } = require("discord.js");
+const { embed: ee, emoji } = require("../../../settings/config");
 const JUGNU = require("../../../handlers/Client");
 const { Queue } = require("distube");
 
@@ -10,7 +11,7 @@ module.exports = {
   botPermissions: [],
   category: "",
   cooldown: 10,
-  type: ApplicationCommandType.ChatInput,
+  type: "CHAT_INPUT",
   inVoiceChannel: false,
   inSameVoiceChannel: false,
   Player: false,
@@ -29,16 +30,14 @@ module.exports = {
 };
 
 // message input slash commands
-const {
-  ContextMenuCommandInteraction,
-  ApplicationCommandType,
-} = require("discord.js");
+const { ContextMenuCommandInteraction } = require("discord.js");
+const { embed: ee, emoji } = require("../../../settings/config");
 const JUGNU = require("../../../handlers/Client");
 
 module.exports = {
   name: "",
   category: "",
-  type: ApplicationCommandType.Message,
+  type: "MESSAGE",
   /**
    *
    * @param {JUGNU} client
@@ -51,16 +50,14 @@ module.exports = {
 
 // user slash commands
 
-const {
-  ContextMenuCommandInteraction,
-  ApplicationCommandType,
-} = require("discord.js");
+const { ContextMenuCommandInteraction } = require("discord.js");
+const { embed: ee, emoji } = require("../../../settings/config");
 const JUGNU = require("../../../handlers/Client");
 
 module.exports = {
   name: "",
   category: "",
-  type: ApplicationCommandType.User,
+  type: "USER",
   /**
    *
    * @param {JUGNU} client
@@ -78,7 +75,7 @@ const { Queue } = require("distube");
 
 module.exports = {
   name: "",
-  aliases: [],
+  aliases : [],
   description: ``,
   userPermissions: [],
   botPermissions: [],

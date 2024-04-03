@@ -1,19 +1,15 @@
-const {
-  CommandInteraction,
-  PermissionFlagsBits,
-  ApplicationCommandType,
-} = require("discord.js");
+const { CommandInteraction } = require("discord.js");
 const JUGNU = require("../../../handlers/Client");
 const { Queue } = require("distube");
 
 module.exports = {
   name: "stop",
   description: `destroy current queue`,
-  userPermissions: PermissionFlagsBits.Connect,
-  botPermissions: PermissionFlagsBits.Connect,
+  userPermissions: ["CONNECT"],
+  botPermissions: ["CONNECT"],
   category: "Music",
   cooldown: 5,
-  type: ApplicationCommandType.ChatInput,
+  type: "CHAT_INPUT",
   inVoiceChannel: true,
   inSameVoiceChannel: true,
   Player: true,
@@ -28,7 +24,7 @@ module.exports = {
    */
   run: async (client, interaction, args, queue) => {
     // Code
-    queue.stop();
+    queue.stop()
     client.embed(
       interaction,
       `${client.config.emoji.SUCCESS} Queue Destroyed !!`

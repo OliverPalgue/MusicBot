@@ -1,20 +1,15 @@
-const {
-  CommandInteraction,
-  ApplicationCommandOptionType,
-  PermissionFlagsBits,
-  ApplicationCommandType,
-} = require("discord.js");
+const { CommandInteraction } = require("discord.js");
 const JUGNU = require("../../../handlers/Client");
 const { Queue } = require("distube");
 
 module.exports = {
   name: "dj",
   description: `DJ System`,
-  userPermissions: PermissionFlagsBits.ManageGuild,
-  botPermissions: PermissionFlagsBits.ManageGuild,
+  userPermissions: ["MANAGE_GUILD"],
+  botPermissions: ["MANAGE_GUILD"],
   category: "Settings",
   cooldown: 5,
-  type: ApplicationCommandType.ChatInput,
+  type: "CHAT_INPUT",
   inVoiceChannel: false,
   inSameVoiceChannel: false,
   Player: false,
@@ -23,12 +18,12 @@ module.exports = {
     {
       name: "enable",
       description: `enable dj system in your server`,
-      type: ApplicationCommandOptionType.Subcommand,
+      type: "SUB_COMMAND",
       options: [
         {
           name: "role",
           description: `mention a role for dj system`,
-          type: ApplicationCommandOptionType.Role,
+          type: "ROLE",
           required: true,
         },
       ],
@@ -36,12 +31,7 @@ module.exports = {
     {
       name: "disable",
       description: `disable dj system in your server`,
-      type: ApplicationCommandOptionType.Subcommand,
-    },
-    {
-      name: "commands",
-      description: `show all dj slash commands`,
-      type: ApplicationCommandOptionType.Subcommand,
+      type: "SUB_COMMAND",
     },
   ],
 
@@ -72,19 +62,6 @@ module.exports = {
           client.embed(
             interaction,
             `${client.config.emoji.SUCCESS} DJ System Disabled`
-          );
-        }
-        break;
-      case "commands":
-        {
-          const djcommands = client.commands
-            .filter((cmd) => cmd?.djOnly)
-            .map((cmd) => cmd.name)
-            .join(", ");
-
-          client.embed(
-            interaction,
-            `**DJ Commands** \n \`\`\`js\n${djcommands}\`\`\``
           );
         }
         break;

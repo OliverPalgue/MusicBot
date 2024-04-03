@@ -1,12 +1,7 @@
-const {
-  cooldown,
-  check_dj,
-  databasing,
-  getPermissionName,
-} = require("../handlers/functions");
+const { cooldown, check_dj, databasing } = require("../handlers/functions");
 const client = require("..");
 const { PREFIX: botPrefix, emoji } = require("../settings/config");
-const { PermissionsBitField, EmbedBuilder } = require("discord.js");
+const { Permissions } = require("discord.js");
 
 client.on("messageCreate", async (message) => {
   if (message.author.bot || !message.guild || !message.id) return;
@@ -22,15 +17,10 @@ client.on("messageCreate", async (message) => {
   const cmd = args.shift().toLowerCase();
   if (cmd.length === 0) {
     if (nprefix.includes(client.user.id)) {
-      return message.reply({
-        embeds: [
-          new EmbedBuilder()
-            .setColor(client.config.embed.color)
-            .setDescription(
-              ` ${emoji.SUCCESS} To See My All Commands Type  \`/help\` or \`${prefix}help\``
-            ),
-        ],
-      });
+      client.embed(
+        message,
+        ` ${emoji.SUCCESS} To See My All Commands Type  \`/help\` or \`${prefix}help\``
+      );
     }
   }
   const command =
@@ -40,28 +30,26 @@ client.on("messageCreate", async (message) => {
   if (command) {
     let queue = client.distube.getQueue(message.guild.id);
     let voiceChannel = message.member.voice.channel;
-    let botChannel = message.guild.members.me.voice.channel;
+    let botChannel = message.guild.me.voice.channel;
     let checkDJ = await check_dj(client, message.member, queue?.songs[0]);
 
     if (
       !message.member.permissions.has(
-        PermissionsBitField.resolve(command.userPermissions)
+        Permissions.FLAGS[command.userPermissions] || []
       )
     ) {
-      const needPerms = getPermissionName(command.userPermissions);
       return client.embed(
         message,
-        `You Don't Have \`${needPerms}\` Permission to Use \`${command.name}\` Command!!`
+        `You Don't Have \`${command.userPermissions}\` Permission to Use \`${command.name}\` Command!!`
       );
     } else if (
-      !message.guild.members.me.permissions.has(
-        PermissionsBitField.resolve(command.botPermissions)
+      !message.guild.me.permissions.has(
+        Permissions.FLAGS[command.botPermissions] || []
       )
     ) {
-      const needPerms = getPermissionName(command.botPermissions);
       return client.embed(
         message,
-        `I Don't Have \`${needPerms}\` Permission to Run \`${command.name}\` Command!!`
+        `I Don't Have \`${command.botPermissions}\` Permission to Use \`${command.name}\` Command!!`
       );
     } else if (cooldown(message, command)) {
       return client.embed(

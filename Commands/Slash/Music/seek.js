@@ -1,20 +1,15 @@
-const {
-  CommandInteraction,
-  PermissionFlagsBits,
-  ApplicationCommandType,
-  ApplicationCommandOptionType,
-} = require("discord.js");
+const { CommandInteraction } = require("discord.js");
 const JUGNU = require("../../../handlers/Client");
 const { Queue } = require("distube");
 
 module.exports = {
   name: "seek",
   description: `seek then current song`,
-  userPermissions: PermissionFlagsBits.Connect,
-  botPermissions: PermissionFlagsBits.Connect,
+  userPermissions: ["CONNECT"],
+  botPermissions: ["CONNECT"],
   category: "Music",
   cooldown: 5,
-  type: ApplicationCommandType.ChatInput,
+  type: "CHAT_INPUT",
   inVoiceChannel: true,
   inSameVoiceChannel: true,
   Player: true,
@@ -23,7 +18,7 @@ module.exports = {
     {
       name: "amount",
       description: `Give seek amount in number`,
-      type: ApplicationCommandOptionType.Number,
+      type: "NUMBER",
       required: true,
     },
   ],
@@ -37,7 +32,7 @@ module.exports = {
    */
   run: async (client, interaction, args, queue) => {
     // Code
-    let seek = interaction.options.getNumber("amount");
+    let seek = interaction.options.getNumber("amount")
     await queue.seek(seek);
     client.embed(
       interaction,

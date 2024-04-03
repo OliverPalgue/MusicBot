@@ -1,26 +1,27 @@
-const {
-  CommandInteraction,
-  ActionRowBuilder,
-  StringSelectMenuBuilder,
-  EmbedBuilder,
-  PermissionFlagsBits,
-  ApplicationCommandType,
-} = require("discord.js");
+const { CommandInteraction } = require("discord.js");
 const JUGNU = require("../../../handlers/Client");
 const { Queue } = require("distube");
 
 module.exports = {
   name: "filter",
   description: `set filters in current queue`,
-  userPermissions: PermissionFlagsBits.Connect,
-  botPermissions: PermissionFlagsBits.Connect,
+  userPermissions: ["CONNECT"],
+  botPermissions: ["CONNECT"],
   category: "Music",
   cooldown: 5,
-  type: ApplicationCommandType.ChatInput,
+  type: "CHAT_INPUT",
   inVoiceChannel: true,
   inSameVoiceChannel: true,
   Player: true,
   djOnly: true,
+  options: [
+    {
+      name: "name",
+      description: `type filter name to set in queue`,
+      type: "STRING",
+      required: true,
+    },
+  ],
   /**
    *
    * @param {JUGNU} client
@@ -30,81 +31,29 @@ module.exports = {
    */
   run: async (client, interaction, args, queue) => {
     // Code
-    const filters = Object.keys(client.config.filters);
 
-    const row = new ActionRowBuilder().addComponents([
-      new StringSelectMenuBuilder()
-        .setCustomId("filter-menu")
-        .setPlaceholder("Click To Select Filter ..")
-        .addOptions(
-          [
-            {
-              label: `Off`,
-              description: `Click to Disable Filter`,
-              value: "off",
-            },
-            filters
-              .filter((_, index) => index <= 22)
-              .map((value) => {
-                return {
-                  label: value.toLocaleUpperCase(),
-                  description: `Click to Set ${value} Filter`,
-                  value: value,
-                };
-              }),
-          ].flat(Infinity)
-        ),
-    ]);
-
-    let msg = await interaction.followUp({
-      embeds: [
-        new EmbedBuilder()
-          .setColor(client.config.embed.color)
-          .setTitle(`Select To Enable Filters ...`)
-          .setFooter(client.getFooter(interaction.user))
-          .setDescription(
-            `> Click on below dropdown Menu and Select a Filter To Add Filter in Queue !!`
-          ),
-      ],
-      components: [row],
-      fetchReply: true,
-    });
-    const collector = await msg.createMessageComponentCollector({
-      // filter: (i) => i.user.id === message.author.id,
-      time: 60000 * 10,
-    });
-    collector.on("collect", async (menu) => {
-      if (menu.isStringSelectMenu()) {
-        await menu.deferUpdate().catch((e) => {});
-        if (menu.customId === "filter-menu") {
-          if (menu.user.id !== interaction.user.id) {
-            return menu.followUp({
-              content: `You are not author of this interaction`,
-              ephemeral: true,
-            });
-          }
-          let filter = menu.values[0];
-          if (filter === "off") {
-            queue.filters.clear();
-            menu.followUp({
-              content: `${client.config.emoji.SUCCESS} Queue Filter Off !!`,
-              ephemeral: true,
-            });
-          } else {
-            if (queue.filters.has(filter)) {
-              queue.filters.remove(filter);
-            } else {
-              queue.filters.add(filter);
-            }
-            menu.followUp({
-              content: `${
-                client.config.emoji.SUCCESS
-              } | Current Queue Filter: \`${queue.filters.names.join(", ")}\``,
-              ephemeral: true,
-            });
-          }
-        }
-      }
-    });
+    let filterName = interaction.options.getString("name");
+    if (filterName === "off") {
+      queue.setFilter(false);
+      client.embed(
+        interaction,
+        `${client.config.emoji.SUCCESS} Queue Filter Off !!`
+      );
+    } else if (Object.keys(client.distube.filters).includes(filterName) == false) {
+      client.embed(
+        interaction,
+        `${client.config.emoji.ERROR
+        } Not a Valid Filter !! \n\n \`\`\`nim\n ${Object.keys(
+          client.distube.filters
+        ).map(f => `\`${f}\``).join(" , ").substring(0, 2000)} \`\`\``
+      );
+    } else if (Object.keys(client.distube.filters).includes(filterName)) {
+      queue.setFilter(filterName);
+      client.embed(
+        interaction,
+        `${client.config.emoji.SUCCESS} Current Queue Filter: \`${queue.filters.join(", ") || "Off"
+        }\` !!`
+      );
+    }
   },
 };

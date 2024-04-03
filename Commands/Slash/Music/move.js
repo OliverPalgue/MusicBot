@@ -1,20 +1,15 @@
-const {
-  CommandInteraction,
-  PermissionFlagsBits,
-  ApplicationCommandType,
-  ApplicationCommandOptionType,
-} = require("discord.js");
+const { CommandInteraction } = require("discord.js");
 const JUGNU = require("../../../handlers/Client");
 const { Queue } = require("distube");
 
 module.exports = {
   name: "move",
   description: `move a song in current queue`,
-  userPermissions: PermissionFlagsBits.Connect,
-  botPermissions: PermissionFlagsBits.Connect,
+  userPermissions: ["CONNECT"],
+  botPermissions: ["CONNECT"],
   category: "Music",
   cooldown: 5,
-  type: ApplicationCommandType.ChatInput,
+  type: "CHAT_INPUT",
   inVoiceChannel: true,
   inSameVoiceChannel: true,
   Player: true,
@@ -23,13 +18,13 @@ module.exports = {
     {
       name: "trackindex",
       description: `Song Index`,
-      type: ApplicationCommandOptionType.Number,
+      type: "NUMBER",
       required: true,
     },
     {
       name: "targetindex",
       description: `Target Song Index`,
-      type: ApplicationCommandOptionType.Number,
+      type: "NUMBER",
       required: true,
     },
   ],
@@ -64,9 +59,9 @@ module.exports = {
       queue.addToQueue(song, position);
       client.embed(
         interaction,
-        `📑 Moved **${client.getTitle(
-          song
-        )}** to the **\`${position}th\`** Place right after **_${
+        `📑 Moved **${
+          song.name
+        }** to the **\`${position}th\`** Place right after **_${
           queue.songs[position - 1].name
         }_!**`
       );

@@ -1,4 +1,4 @@
-const { Message, EmbedBuilder, PermissionFlagsBits } = require("discord.js");
+const { Message , MessageEmbed } = require("discord.js");
 const JUGNU = require("../../../handlers/Client");
 const { Queue } = require("distube");
 
@@ -6,8 +6,8 @@ module.exports = {
   name: "nowplaying",
   aliases: ["np"],
   description: `see what is playing now`,
-  userPermissions: PermissionFlagsBits.Connect,
-  botPermissions: PermissionFlagsBits.Connect,
+  userPermissions: ["CONNECT"],
+  botPermissions: ["CONNECT"],
   category: "Music",
   cooldown: 5,
   inVoiceChannel: false,
@@ -29,7 +29,7 @@ module.exports = {
 
     message.reply({
       embeds: [
-        new EmbedBuilder()
+        new MessageEmbed()
           .setColor(client.config.embed.color)
           .setThumbnail(song.thumbnail)
           .setAuthor({
@@ -37,7 +37,7 @@ module.exports = {
             iconURL: song.thumbnail,
             url: song.url,
           })
-          .setDescription(`** [${client.getTitle(song)}](${song.streamURL}) **`)
+          .setDescription(`** [${song.name}](${song.streamURL}) **`)
           .addFields([
             {
               name: `** Duration **`,

@@ -1,4 +1,4 @@
-const { Message, PermissionFlagsBits } = require("discord.js");
+const { Message } = require("discord.js");
 const JUGNU = require("../../../handlers/Client");
 const { Queue } = require("distube");
 
@@ -6,8 +6,8 @@ module.exports = {
   name: "autoresume",
   aliases: ["atresume"],
   description: `toggle autoresume system on/off`,
-  userPermissions: PermissionFlagsBits.ManageGuild,
-  botPermissions: PermissionFlagsBits.ManageGuild,
+  userPermissions: ["MANAGE_GUILD"],
+  botPermissions: ["MANAGE_GUILD"],
   category: "Settings",
   cooldown: 5,
   inVoiceChannel: false,

@@ -1,20 +1,15 @@
-const {
-  CommandInteraction,
-  PermissionFlagsBits,
-  ApplicationCommandType,
-  Colors,
-} = require("discord.js");
+const { CommandInteraction } = require("discord.js");
 const JUGNU = require("../../../handlers/Client");
 const { Queue } = require("distube");
 
 module.exports = {
   name: "ping",
   description: `get ping of bot`,
-  userPermissions: PermissionFlagsBits.SendMessages,
-  botPermissions: PermissionFlagsBits.EmbedLinks,
+  userPermissions: ["SEND_MESSAGES"],
+  botPermissions: ["EMBED_LINKS"],
   category: "Information",
   cooldown: 5,
-  type: ApplicationCommandType.ChatInput,
+  type: "CHAT_INPUT",
   inVoiceChannel: false,
   inSameVoiceChannel: false,
   Player: false,
@@ -29,43 +24,6 @@ module.exports = {
    */
   run: async (client, interaction, args, queue) => {
     // Code
-    await interaction.deferReply({ ephemeral: true }).catch(() => {});
-    const startTime = Date.now();
-
-    const tempMessage = await interaction.followUp({
-      embeds: [
-        {
-          description: "Pinging...",
-          color: Colors.Blurple,
-        },
-      ],
-    });
-
-    const messageLatency =
-      tempMessage.createdTimestamp - interaction.createdTimestamp;
-    const serverLatency = Math.round(messageLatency / 2);
-    const apiLatency = Math.round(client.ws.ping);
-    const botLatency = Date.now() - startTime;
-
-    await interaction.editReply({
-      embeds: [
-        {
-          title: "Pong! 🏓",
-          description: `Bot Latency: \`${formatMilliseconds(
-            botLatency
-          )}\`\nMessage Latency: \`${formatMilliseconds(
-            messageLatency
-          )}\`\nServer Latency: \`${formatMilliseconds(
-            serverLatency
-          )}\`\nDiscord API Latency: \`${formatMilliseconds(apiLatency)}\``,
-          color: Colors.Blurple,
-        },
-      ],
-    });
+    client.embed(interaction, `Ping :: \`${client.ws.ping}\``);
   },
 };
-
-// Function to format milliseconds into a human-readable string
-function formatMilliseconds(ms) {
-  return `${ms}ms`;
-}

@@ -1,8 +1,4 @@
-const {
-  CommandInteraction,
-  ApplicationCommandType,
-  PermissionFlagsBits,
-} = require("discord.js");
+const { CommandInteraction } = require("discord.js");
 const JUGNU = require("../../../handlers/Client");
 const { Queue } = require("distube");
 const { links } = require("../../../settings/config");
@@ -10,11 +6,11 @@ const { links } = require("../../../settings/config");
 module.exports = {
   name: "invite",
   description: `Get My Invite Link to add me`,
-  userPermissions: PermissionFlagsBits.SendMessages,
-  botPermissions: PermissionFlagsBits.EmbedLinks,
+  userPermissions: ["SEND_MESSAGES"],
+  botPermissions: ["EMBED_LINKS"],
   category: "Information",
   cooldown: 5,
-  type: ApplicationCommandType.ChatInput,
+  type: "CHAT_INPUT",
   inVoiceChannel: false,
   inSameVoiceChannel: false,
   Player: false,
@@ -30,11 +26,11 @@ module.exports = {
   run: async (client, interaction, args, queue) => {
     // Code
     client.embed(
-      interaction,
-      `[\`Click to Invite Me\`](${links.inviteURL.replace(
-        "BOTID",
-        client.user.id
-      )})`
-    );
+        interaction,
+        `[\`Click to Invite Me\`](${links.inviteURL.replace(
+          "BOTID",
+          client.user.id
+        )})`
+      );
   },
 };

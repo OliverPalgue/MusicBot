@@ -1,20 +1,15 @@
-const {
-  CommandInteraction,
-  EmbedBuilder,
-  ApplicationCommandType,
-  PermissionFlagsBits,
-} = require("discord.js");
+const { CommandInteraction, MessageEmbed } = require("discord.js");
 const JUGNU = require("../../../handlers/Client");
 const { Queue } = require("distube");
 
 module.exports = {
   name: "nowplaying",
   description: `see which song playing current song`,
-  userPermissions: PermissionFlagsBits.Connect,
-  botPermissions: PermissionFlagsBits.Connect,
+  userPermissions: ["CONNECT"],
+  botPermissions: ["CONNECT"],
   category: "Music",
   cooldown: 5,
-  type: ApplicationCommandType.ChatInput,
+  type: "CHAT_INPUT",
   inVoiceChannel: false,
   inSameVoiceChannel: false,
   Player: true,
@@ -33,7 +28,7 @@ module.exports = {
 
     interaction.followUp({
       embeds: [
-        new EmbedBuilder()
+        new MessageEmbed()
           .setColor(client.config.embed.color)
           .setThumbnail(song.thumbnail)
           .setAuthor({
@@ -41,7 +36,7 @@ module.exports = {
             iconURL: song.thumbnail,
             url: song.url,
           })
-          .setDescription(`** [${client.getTitle(song)}](${song.streamURL}) **`)
+          .setDescription(`** [${song.name}](${song.streamURL}) **`)
           .addFields([
             {
               name: `** Duration **`,

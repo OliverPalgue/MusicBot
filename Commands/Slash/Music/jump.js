@@ -1,20 +1,15 @@
-const {
-  CommandInteraction,
-  PermissionFlagsBits,
-  ApplicationCommandType,
-  ApplicationCommandOptionType,
-} = require("discord.js");
+const { CommandInteraction } = require("discord.js");
 const JUGNU = require("../../../handlers/Client");
 const { Queue } = require("distube");
 
 module.exports = {
   name: "jump",
   description: `jump to a song in queue`,
-  userPermissions: PermissionFlagsBits.Connect,
-  botPermissions: PermissionFlagsBits.Connect,
+  userPermissions: ["CONNECT"],
+  botPermissions: ["CONNECT"],
   category: "Music",
   cooldown: 5,
-  type: ApplicationCommandType.ChatInput,
+  type: "CHAT_INPUT",
   inVoiceChannel: true,
   inSameVoiceChannel: true,
   Player: true,
@@ -23,7 +18,7 @@ module.exports = {
     {
       name: "index",
       description: `Song index in Queue`,
-      type: ApplicationCommandOptionType.Number,
+      type: "NUMBER",
       required: true,
     },
   ],
@@ -37,7 +32,7 @@ module.exports = {
   run: async (client, interaction, args, queue) => {
     // Code
     let index = interaction.options.getNumber("index");
-    let song = queue.songs[index];
+    let song = queue.songs[index]
     if (index > queue.songs.length - 1 || index < 0) {
       return client.embed(
         interaction,
@@ -51,9 +46,7 @@ module.exports = {
       queue.jump(index).then((q) => {
         client.embed(
           interaction,
-          `** ${
-            client.config.emoji.SUCCESS
-          } Jumped to The Song [\`${client.getTitle(song)}\`](${song.url}) **`
+          `** ${client.config.emoji.SUCCESS} Jumped to The Song [\`${song.name}\`](${song.url}) **`
         );
       });
     }

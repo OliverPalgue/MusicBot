@@ -1,4 +1,4 @@
-const { Message, ChannelType, PermissionFlagsBits } = require("discord.js");
+const { Message } = require("discord.js");
 const JUGNU = require("../../../handlers/Client");
 const { Queue } = require("distube");
 
@@ -6,8 +6,8 @@ module.exports = {
   name: "setupmusic",
   aliases: ["setmusic", "setup"],
   description: `setup music channel in server`,
-  userPermissions: PermissionFlagsBits.ManageGuild,
-  botPermissions: PermissionFlagsBits.ManageChannels,
+  userPermissions: ["MANAGE_CHANNELS"],
+  botPermissions: ["MANAGE_CHANNELS"],
   category: "Settings",
   cooldown: 5,
   inVoiceChannel: false,
@@ -34,26 +34,11 @@ module.exports = {
       );
     } else {
       message.guild.channels
-        .create({
-          name: `${client.user.username}-requests`,
-          type: ChannelType.GuildText,
+        .create(`${client.user.username}-requests`, {
+          type: "GUILD_TEXT",
           rateLimitPerUser: 3,
-          reason: `Management of music requests channel.`,
-          topic: `Music Request Channel for ${client.user.username}. Please submit song names or links to play music.`,
-          permissionOverwrites: [
-            {
-              id: client.user.id,
-              allow: [
-                "ManageMessages",
-                "ManageChannels",
-                "SendMessages",
-                "EmbedLinks",
-                "ReadMessageHistory",
-                "UseExternalEmojis",
-                "ViewChannel",
-              ],
-            },
-          ],
+          reason: `for music bot`,
+          topic: `Music Request Channel for ${client.user.username}, Type Song Name or Link to Play Song`,
         })
         .then(async (ch) => {
           await ch

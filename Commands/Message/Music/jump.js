@@ -1,4 +1,4 @@
-const { Message, PermissionFlagsBits } = require("discord.js");
+const { Message } = require("discord.js");
 const JUGNU = require("../../../handlers/Client");
 const { Queue } = require("distube");
 
@@ -6,8 +6,8 @@ module.exports = {
   name: "jump",
   aliases: ["jmp", "jp"],
   description: `jump to a song in queue by index`,
-  userPermissions: PermissionFlagsBits.Connect,
-  botPermissions: PermissionFlagsBits.Connect,
+  userPermissions: ["CONNECT"],
+  botPermissions: ["CONNECT"],
   category: "Music",
   cooldown: 5,
   inVoiceChannel: true,
@@ -46,9 +46,7 @@ module.exports = {
       queue.jump(index).then((q) => {
         client.embed(
           message,
-          `** ${
-            client.config.emoji.SUCCESS
-          } Jumped to The Song [\`${client.getTitle(song)}\`](${song.url}) **`
+          `** ${client.config.emoji.SUCCESS} Jumped to The Song [\`${song.name}\`](${song.url}) **`
         );
       });
     }

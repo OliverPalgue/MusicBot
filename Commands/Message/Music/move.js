@@ -1,4 +1,4 @@
-const { Message, PermissionFlagsBits } = require("discord.js");
+const { Message } = require("discord.js");
 const JUGNU = require("../../../handlers/Client");
 const { Queue } = require("distube");
 
@@ -6,8 +6,8 @@ module.exports = {
   name: "move",
   aliases: ["mv", "nvs"],
   description: `move a song in queue`,
-  userPermissions: PermissionFlagsBits.Connect,
-  botPermissions: PermissionFlagsBits.Connect,
+  userPermissions: ["CONNECT"],
+  botPermissions: ["CONNECT"],
   category: "Music",
   cooldown: 5,
   inVoiceChannel: true,
@@ -49,9 +49,9 @@ module.exports = {
       queue.addToQueue(song, position);
       client.embed(
         message,
-        `📑 Moved **${client.getTitle(
-          song
-        )}** to the **\`${position}th\`** Place right after **_${
+        `📑 Moved **${
+          song.name
+        }** to the **\`${position}th\`** Place right after **_${
           queue.songs[position - 1].name
         }_!**`
       );

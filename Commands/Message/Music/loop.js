@@ -1,4 +1,4 @@
-const { Message, PermissionFlagsBits } = require("discord.js");
+const { Message } = require("discord.js");
 const JUGNU = require("../../../handlers/Client");
 const { Queue } = require("distube");
 
@@ -6,8 +6,8 @@ module.exports = {
   name: "loop",
   aliases: ["lp", "lop"],
   description: `toggle queue/song/off repeat mode`,
-  userPermissions: PermissionFlagsBits.Connect,
-  botPermissions: PermissionFlagsBits.Connect,
+  userPermissions: ["CONNECT"],
+  botPermissions: ["CONNECT"],
   category: "Music",
   cooldown: 5,
   inVoiceChannel: true,
@@ -36,19 +36,19 @@ module.exports = {
     if (loopmode === "off") {
       await queue.setRepeatMode(0);
       return client.embed(
-        message,
+        interaction,
         `** ${client.config.emoji.ERROR} Loop Disabled!! **`
       );
     } else if (loopmode === "song" || loopmode === "s") {
       await queue.setRepeatMode(1);
       return client.embed(
-        message,
+        interaction,
         `** ${client.config.emoji.SUCCESS} Song Loop Enabled!! **`
       );
     } else if (loopmode === "queue" || loopmode === "q") {
       await queue.setRepeatMode(2);
       return client.embed(
-        message,
+        interaction,
         `** ${client.config.emoji.SUCCESS} Queue Loop Enabled!! **`
       );
     }

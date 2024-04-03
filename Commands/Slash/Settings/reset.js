@@ -1,19 +1,15 @@
-const {
-  CommandInteraction,
-  PermissionFlagsBits,
-  ApplicationCommandType,
-} = require("discord.js");
+const { CommandInteraction } = require("discord.js");
 const JUGNU = require("../../../handlers/Client");
 const { Queue } = require("distube");
 
 module.exports = {
   name: "reset",
   description: `reset bot to default settings`,
-  userPermissions: PermissionFlagsBits.ManageGuild,
-  botPermissions: PermissionFlagsBits.EmbedLinks,
+  userPermissions: ["MANAGE_GUILD"],
+  botPermissions: ["EMBED_LINKS"],
   category: "Settings",
   cooldown: 5,
-  type: ApplicationCommandType.ChatInput,
+  type: "CHAT_INPUT",
   inVoiceChannel: true,
   inSameVoiceChannel: true,
   Player: false,
@@ -28,7 +24,7 @@ module.exports = {
    */
   run: async (client, interaction, args, queue) => {
     // Code
-    await client.music.delete(interaction.guildId);
-    client.embed(interaction, `${client.config.emoji.SUCCESS} Reseted Done !!`);
+    await client.music.delete(interaction.guildId)
+    client.embed(interaction,`${client.config.emoji.SUCCESS} Reseted Done !!`)
   },
 };
